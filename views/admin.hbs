@@ -1,0 +1,213 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Node.js & Mysql</title>
+  <link href="/assets/css/bootstrap.css" rel="stylesheet" type="text/css"/>
+  <script type="text/javascript" src="/assets/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<script>
+    $(document).ready(function(){
+            //mostrar datos para modalde edición
+        $('#trabajadores').on('click','.edit',function(){
+        var nombreTrab =$(this).data('name');
+        var aPat =  $(this).data('ln1');
+        var aMat =  $(this).data('ln2');
+        var rfc = $(this).data('rfc');
+        var numTrabajador =$(this).data('nt');
+        $('#editTrabajador').modal('show');
+        $('.nombreTrab').val(nombreTrab);
+        $('.aPat').val(aPat);
+        $('.aMat').val(aMat);
+        $('.rfc').val(rfc);
+        $('.numTrabajador').val(numTrabajador);
+      });
+            //mostrar datos en modal eliminar
+      $('#trabajadores').on('click','.act',function(){
+        var persona= $(this).data('name')+' '+$(this).data('ln1')+' '+ $(this).data('ln2')+', '+$(this).data('rfc');
+        var numTrabajador =$(this).data('nt');
+        var estado = $(this).data('estado');
+        var numTrabajador2 = $(this).data('nt');
+        if (estado==1) {
+            $('#desactivate').modal('show');
+            $('.estado').val(estado);
+            $('.numTrabajador2').val(numTrabajador2);
+            $('.persona').val(persona);
+        }else{
+          $('#activate').modal('show');
+          $('.estado').val(estado);
+          $('.numTrabajador2').val(numTrabajador2);            
+          $('.persona').val(persona);        }
+      });
+ 
+    });
+</script>
+<body>
+  <div class="container">
+    <h2>ADMINISTRADOR</h2>
+       
+    <table class="table table-striped" id="trabajadores">
+      <thead>
+      <tr>
+        <th>N° Empleado</th>
+        <th>Apellido Paterno</th>
+        <th>Apellido Materno</th>
+        <th>Nombre(s)</th>
+        <th>RFC</th>
+        <th>Fecha_Alta</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+      <tbody>
+         {{#each results}}
+        <tr>
+          <td>{{ numTrabajador }}</td>
+          <td>{{ aPat }}</td>
+          <td>{{ aMat }}</td>
+          <td>{{ nombreTrab }}</td>
+          <td>{{ rfc }}</td>
+          <td>{{ feAlta }}</td>
+          <td>
+            <a href="javascript:void(0);" class="btn btn-sm btn-info edit" data-nt="{{ numTrabajador }}" data-name="{{ nombreTrab }}" data-ln1="{{ aPat }}" data-ln2="{{ aMat }}" data-rfc="{{ rfc }}" data-estado="{{ estado }}">Editar</a>
+              <script type="text/javascript">
+                if ({{estado}}==1) {
+                  document.write("<br><a href='javascript:void(0);' class='btn btn-success act' data-nt='{{ numTrabajador }}' data-name='{{ nombreTrab }}' data-ln1='{{ aPat }}' data-ln2='{{ aMat }}' data-rfc='{{ rfc }}' data-estado='{{ estado }}'>Desactivar</a>");
+                }else{
+                  document.write("<br><a href='javascript:void(0);' class='btn btn-warning act' data-nt='{{ numTrabajador }}' data-name='{{ nombreTrab }}' data-ln1='{{ aPat }}' data-ln2='{{ aMat }}' data-rfc='{{ rfc }}' data-estado='{{ estado }}'>Activar</a>");
+                }
+              </script>
+          </td>
+        </tr>
+
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal Add Product-->
+      <form action="/addTrabajador" method="post">
+        <div class="modal fade" id="addTrabajador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Agregar Nuevo Trabajador</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div class="modal-body">
+               <div class="form-group">
+                   <input type="text" name="name" class="form-control" placeholder="Nombre del Trabajador" required>
+               </div>
+ 
+               <div class="form-group">
+                   <input type="text" name="lastName1" class="form-control" placeholder="Apellido Paterno" required>
+               </div>
+
+               <div class="form-group">
+                   <input type="text" name="lastName2" class="form-control" placeholder="Apellido Materno" required>
+               </div>
+               <div class="form-group">
+                   <input type="text" name="rfc" class="form-control" placeholder="RFC" required>
+               </div>
+               <div class="form-group">
+                   <input type="text" name="numTrabajador" class="form-control" placeholder="Número del trabajador" required>
+               </div>
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+               <button type="submit" class="btn btn-primary">Guardar</button>
+             </div>
+           </div>
+         </div>
+        </div>
+     </form>
+
+      <form action="/editTrabajador" method="post">
+        <div class="modal fade" id="editTrabajador" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLabel">Editar Trabajador</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div class="modal-body">
+               <div class="form-group">
+                   <input type="text" name="nombreTrab" class="form-control nombreTrab" placeholder="Nombre del Trabajador" required>
+               </div>
+ 
+               <div class="form-group">
+                   <input type="text" name="aPat" class="form-control aPat" placeholder="Apellido Paterno" required>
+               </div>
+
+               <div class="form-group">
+                   <input type="text" name="aMat" class="form-control aMat" placeholder="Apellido Materno" required>
+               </div>
+               <div class="form-group">
+                   <input type="text" name="rfc" class="form-control rfc" placeholder="RFC" required>
+               </div>
+               <div class="form-group">
+                   <input type="hidden" name="numTrabajador" class="form-control numTrabajador">
+               </div>
+             </div>
+             <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+           </div>
+         </div>
+        </div>
+     </form>
+
+<!-- Modal Delete Product-->
+      <form id="add-row-form" action="/activar" method="post">
+         <div class="modal fade" id="activate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">Activar Trabajador</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                   </div>
+                   <div class="modal-body">
+                       <strong>¿Esta seguro de desactivar a?</strong>
+                       <input type="text" class="form-control persona" disabled>
+                   </div>
+                   <div class="modal-footer">
+                      <input type="hidden" name="numTrabajador" class="form-control numTrabajador2" required>
+                      <input type="hidden" name="estado" class="form-control estado" required>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Aceptar</button>
+                   </div>
+                    </div>
+            </div>
+         </div>
+     </form>
+
+     <form id="add-row-form" action="/activar" method="post">
+         <div class="modal fade" id="desactivate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+               <div class="modal-content">
+                   <div class="modal-header">
+                        <h5 class="modal-title" id="myModalLabel">Desactivar Trabajador</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                   </div>
+                   <div class="modal-body">
+                       <strong>¿Esta seguro de desactivar a?</strong>
+                       <input type="text" class="form-control persona" disabled>
+                   </div>
+                   <div class="modal-footer">
+                      <input type="hidden" name="numTrabajador" class="form-control numTrabajador2" required>
+                      <input type="hidden" name="estado" class="form-control estado" required>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Aceptar</button>
+                   </div>
+                    </div>
+            </div>
+         </div>
+     </form>
